@@ -32,13 +32,13 @@ print("Nadmiarowe bity: " + str(r))
 
 if x < 128:
     with open(out_file, "wb") as out:
-        out.write(bytes([r])) #liczba nadmiarowych bitów
+        out.write(bytes([x])) #długosc slownika
         for i in range(255):
             if ascii_table[i] != 0:
                 dictionary.append(chr(i))
                 out.write(bytes([i])) #znak
-        bits = 0
-        out_byte = 0
+        bits = 3
+        out_byte = r
         with open(in_file, "rb") as inp:
             while True:
                 chunk = inp.read(1)
