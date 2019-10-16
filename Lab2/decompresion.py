@@ -1,6 +1,6 @@
 import math
-in_file = "plik_compressed.dat"
-out_file = "morys_lorem.txt"
+in_file = "4char_100MB.dat_compressed.dat"
+out_file = "4char_100MB.dat_decompressed.dat"
 
 x = 0 #dlugosc slownika
 n = 0 #liczba bitów potrzebnych na znak
@@ -28,31 +28,26 @@ with open(in_file, "rb") as inp:
     print("Słownik: ", dictionary)
     print("Nadmiarowe bity: ", r)
 
+    def compression():
+        global in_data, bits, n
+        ch = in_data >> (bits - n)
+        out.write(dictionary[ch])
+        # print("ch: ", dictionary[ch])
+        in_data = in_data & (2 ** (bits - n) - 1)
+        bits -= n
+
     with open(out_file, "w") as out:
         while bits >= n:
-            ch = in_data >> (bits - n)
-            out.write(dictionary[ch])
-            # print("ch: ", dictionary[ch])
-            in_data = in_data & (2 ** (bits - n) - 1)
-            bits -= n
-
+            compression()
         while True:
             chunk = inp.read(1)
             if not chunk:
                 while bits - r >= n:
-                    ch = in_data >> (bits - n)
-                    out.write(dictionary[ch])
-                    # print("ch: ", dictionary[ch])
-                    in_data = in_data & (2 ** (bits - n) - 1)
-                    bits -= n
+                    compression()
                 print("Dekompresja zakończona")
                 break  # end of file
             while bits >= n:
-                ch = in_data >> (bits - n)
-                out.write(dictionary[ch])
-                # print("ch: ", dictionary[ch])
-                in_data = in_data & (2 ** (bits - n) - 1)
-                bits -= n
+               compression()
             if bits > 0:
                 in_data = (in_data << 8) | int.from_bytes(chunk, byteorder='big')
             else:
